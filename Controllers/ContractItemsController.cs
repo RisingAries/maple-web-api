@@ -37,7 +37,8 @@ namespace maple_web_api.Controllers
             {
                 return NotFound();
             }
-
+            contractItem.Customer = _context.Customers.Where(c => c.CustomerId == contractItem.CustomerId).First();
+            contractItem.CoveragePlan = _context.CoveragePlans.Where(cp => cp.PlanId == contractItem.CoverageId).First();
             return contractItem;
         }
 
@@ -80,10 +81,21 @@ namespace maple_web_api.Controllers
         public async Task<ActionResult<ContractItem>> PostContractItem([FromForm] string customerName, [FromForm] Country country, [FromForm] DateTime dob, [FromForm] string gender, [FromForm] DateTime saleDate)
         {
             var customer = _context.Customers.Where(c => c.Name == customerName).FirstOrDefault();
-            var planType = _context.CoveragePlans.Where(cp => cp.EligibilityCountry == country).FirstOrDefault();
+            if (customer == null)
+            {
+                return NotFound();
+            }
+            var planType = _context.CoveragePlans.Where(cp => cp.EligibilityCountry == country && cp.EligibilityDateFrom < customer.DateOfBirth && cp.EligibilityDateTo > customer.DateOfBirth).FirstOrDefault();
             var age = DateTime.Now.Year - dob.Year;
-            Console.Write(age);
+            if (planType == null)
+            {
+                return NotFound();
+            }
             var rate = _context.RateCharts.Where(ch => ch.Gender == gender && ch.CuttoffAge > age && ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
+            if (rate == null)
+            {
+                return NotFound();
+            }
             var contractItem = new ContractItem
             {
                 CustomerId = customer.CustomerId,
