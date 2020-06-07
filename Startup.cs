@@ -28,6 +28,8 @@ namespace maple_web_api
                 opt.UseSqlServer("CoveragePlanList")); */
 
             services.AddControllers();
+            services.AddDbContext<InsuranceInfoContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
 
             services.AddDbContext<CustomerContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
