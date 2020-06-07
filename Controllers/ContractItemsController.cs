@@ -76,9 +76,21 @@ namespace maple_web_api.Controllers
         // POST: api/ContractItems
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<ContractItem>> PostContractItem(ContractItem contractItem)
+        [HttpPost()]
+        public async Task<ActionResult<ContractItem>> PostContractItem([FromForm] string customerName, [FromForm] Country country, [FromForm] DateTime dob, [FromForm] string gender, [FromForm] DateTime saleDate)
         {
+            var customer = _context.Customers.Where(c => c.Name == customerName).FirstOrDefault();
+            var planType = _context.CoveragePlans.Where(cp => cp.EligibilityCountry == country).FirstOrDefault();
+            var age = DateTime.Now.Year - dob.Year;
+            Console.Write(age);
+            var rate = _context.RateCharts.Where(ch => ch.Gender == gender && ch.CuttoffAge > age && ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
+            var contractItem = new ContractItem
+            {
+                CustomerId = customer.CustomerId,
+                SaleDate = saleDate,
+                CoverageId = planType.PlanId,
+                NetPrice = rate.NetPrice
+            };
             _context.ContractItems.Add(contractItem);
             await _context.SaveChangesAsync();
 

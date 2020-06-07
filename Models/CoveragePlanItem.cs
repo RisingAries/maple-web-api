@@ -8,6 +8,9 @@ public class CoveragePlanItem
     [Key]
     public int PlanId { get; set; }
 
+    [Required(ErrorMessage = "Plan Name is required")]
+    public string PlanName { get; set; } = "Gold";
+
     [DataType(DataType.Date)]
     [Required(ErrorMessage = "Eligibility Date From is required")]
     public DateTime EligibilityDateFrom { get; set; }

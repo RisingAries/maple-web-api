@@ -8,12 +8,5 @@ public class CoveragePlanContext : DbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.Entity<CoveragePlanItem>().HasData(new CoveragePlanItem
-    {
-        PlanId = 1,
-        EligibilityDateFrom = DateTime.Parse("2009-01-01"),
-        EligibilityDateTo = DateTime.Parse("2021-01-01")
-    });
-
     public DbSet<CoveragePlanItem> CoveragePlanItem { get; set; }
 }

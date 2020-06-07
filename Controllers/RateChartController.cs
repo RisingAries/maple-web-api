@@ -45,7 +45,7 @@ namespace maple_web_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRateChartItem(long id, RateChartItem rateChartItem)
         {
-            if (id != rateChartItem.RateChartId)
+            if (id != rateChartItem.RateId)
             {
                 return BadRequest();
             }
@@ -80,7 +80,7 @@ namespace maple_web_api.Controllers
             _context.RateCharts.Add(rateChartItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRateChartItem", new { id = rateChartItem.RateChartId }, rateChartItem);
+            return CreatedAtAction("GetRateChartItem", new { id = rateChartItem.RateId }, rateChartItem);
         }
 
         // DELETE: api/RateChart/5
@@ -101,7 +101,7 @@ namespace maple_web_api.Controllers
 
         private bool RateChartItemExists(long id)
         {
-            return _context.RateCharts.Any(e => e.RateChartId == id);
+            return _context.RateCharts.Any(e => e.RateId == id);
         }
     }
 }
