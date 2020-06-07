@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using maple_web_api.Models;
 
@@ -29,6 +22,10 @@ namespace maple_web_api
         {
             services.AddDbContext<ContractContext>(opt =>
                opt.UseInMemoryDatabase("ContractList"));
+            services.AddDbContext<CustomerContext>(opt =>
+                opt.UseInMemoryDatabase("CustomerList"));
+            services.AddDbContext<CoveragePlanContext>(opt =>
+                opt.UseInMemoryDatabase("CoveragePlanList"));
 
             services.AddControllers();
 
