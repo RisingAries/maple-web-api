@@ -29,7 +29,7 @@ namespace maple_web_api.Controllers
 
         // GET: api/CoveragePlan/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CoveragePlanItem>> GetCoveragePlanItem(long id)
+        public async Task<ActionResult<CoveragePlanItem>> GetCoveragePlanItem(int id)
         {
             var coveragePlanItem = await _context.CoveragePlans.FindAsync(id);
 
@@ -45,7 +45,7 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCoveragePlanItem(long id, CoveragePlanItem coveragePlanItem)
+        public async Task<IActionResult> PutCoveragePlanItem(int id, CoveragePlanItem coveragePlanItem)
         {
             if (id != coveragePlanItem.PlanId)
             {
@@ -87,7 +87,7 @@ namespace maple_web_api.Controllers
 
         // DELETE: api/CoveragePlan/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CoveragePlanItem>> DeleteCoveragePlanItem(long id)
+        public async Task<ActionResult<CoveragePlanItem>> DeleteCoveragePlanItem(int id)
         {
             var coveragePlanItem = await _context.CoveragePlans.FindAsync(id);
             if (coveragePlanItem == null)
@@ -101,7 +101,7 @@ namespace maple_web_api.Controllers
             return coveragePlanItem;
         }
 
-        private bool CoveragePlanItemExists(long id)
+        private bool CoveragePlanItemExists(int id)
         {
             return _context.CoveragePlans.Any(e => e.PlanId == id);
         }

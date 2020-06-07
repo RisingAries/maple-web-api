@@ -29,7 +29,7 @@ namespace maple_web_api.Controllers
 
         // GET: api/ContractItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ContractItem>> GetContractItem(long id)
+        public async Task<ActionResult<ContractItem>> GetContractItem(int id)
         {
             var contractItem = await _context.ContractItems.FindAsync(id);
 
@@ -45,7 +45,7 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutContractItem(long id, ContractItem contractItem)
+        public async Task<IActionResult> PutContractItem(int id, ContractItem contractItem)
         {
             if (id != contractItem.ContractId)
             {
@@ -99,7 +99,7 @@ namespace maple_web_api.Controllers
 
         // DELETE: api/ContractItems/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ContractItem>> DeleteContractItem(long id)
+        public async Task<ActionResult<ContractItem>> DeleteContractItem(int id)
         {
             var contractItem = await _context.ContractItems.FindAsync(id);
             if (contractItem == null)
@@ -113,7 +113,7 @@ namespace maple_web_api.Controllers
             return contractItem;
         }
 
-        private bool ContractItemExists(long id)
+        private bool ContractItemExists(int id)
         {
             return _context.ContractItems.Any(e => e.ContractId == id);
         }

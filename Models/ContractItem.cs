@@ -13,7 +13,6 @@ public class ContractItem
     [ForeignKey("CustomerId")]
     public Customer Customer { get; set; }
 
-
     [DataType(DataType.Date)]
     [Required(ErrorMessage = "Sale Date is required")]
     public DateTime SaleDate { get; set; }

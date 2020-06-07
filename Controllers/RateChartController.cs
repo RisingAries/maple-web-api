@@ -27,7 +27,7 @@ namespace maple_web_api.Controllers
 
         // GET: api/RateChart/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RateChartItem>> GetRateChartItem(long id)
+        public async Task<ActionResult<RateChartItem>> GetRateChartItem(int id)
         {
             var rateChartItem = await _context.RateCharts.FindAsync(id);
 
@@ -43,7 +43,7 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRateChartItem(long id, RateChartItem rateChartItem)
+        public async Task<IActionResult> PutRateChartItem(int id, RateChartItem rateChartItem)
         {
             if (id != rateChartItem.RateId)
             {
@@ -85,7 +85,7 @@ namespace maple_web_api.Controllers
 
         // DELETE: api/RateChart/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<RateChartItem>> DeleteRateChartItem(long id)
+        public async Task<ActionResult<RateChartItem>> DeleteRateChartItem(int id)
         {
             var rateChartItem = await _context.RateCharts.FindAsync(id);
             if (rateChartItem == null)
@@ -99,7 +99,7 @@ namespace maple_web_api.Controllers
             return rateChartItem;
         }
 
-        private bool RateChartItemExists(long id)
+        private bool RateChartItemExists(int id)
         {
             return _context.RateCharts.Any(e => e.RateId == id);
         }
