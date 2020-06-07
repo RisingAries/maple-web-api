@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using maple_web_api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,9 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class RateChartController : ControllerBase
     {
-        private readonly RateChartContext _context;
+        private readonly InsuranceInfoContext _context;
 
-        public RateChartController(RateChartContext context)
+        public RateChartController(InsuranceInfoContext context)
         {
             _context = context;
         }
@@ -21,14 +22,14 @@ namespace maple_web_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RateChartItem>>> GetRateChartItem()
         {
-            return await _context.RateChartItem.ToListAsync();
+            return await _context.RateCharts.ToListAsync();
         }
 
         // GET: api/RateChart/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RateChartItem>> GetRateChartItem(long id)
         {
-            var rateChartItem = await _context.RateChartItem.FindAsync(id);
+            var rateChartItem = await _context.RateCharts.FindAsync(id);
 
             if (rateChartItem == null)
             {
@@ -76,7 +77,7 @@ namespace maple_web_api.Controllers
         [HttpPost]
         public async Task<ActionResult<RateChartItem>> PostRateChartItem(RateChartItem rateChartItem)
         {
-            _context.RateChartItem.Add(rateChartItem);
+            _context.RateCharts.Add(rateChartItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRateChartItem", new { id = rateChartItem.RateChartId }, rateChartItem);
@@ -86,13 +87,13 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<RateChartItem>> DeleteRateChartItem(long id)
         {
-            var rateChartItem = await _context.RateChartItem.FindAsync(id);
+            var rateChartItem = await _context.RateCharts.FindAsync(id);
             if (rateChartItem == null)
             {
                 return NotFound();
             }
 
-            _context.RateChartItem.Remove(rateChartItem);
+            _context.RateCharts.Remove(rateChartItem);
             await _context.SaveChangesAsync();
 
             return rateChartItem;
@@ -100,7 +101,7 @@ namespace maple_web_api.Controllers
 
         private bool RateChartItemExists(long id)
         {
-            return _context.RateChartItem.Any(e => e.RateChartId == id);
+            return _context.RateCharts.Any(e => e.RateChartId == id);
         }
     }
 }

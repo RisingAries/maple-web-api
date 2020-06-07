@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using maple_web_api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,9 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class CoveragePlanController : ControllerBase
     {
-        private readonly CoveragePlanContext _context;
+        private readonly InsuranceInfoContext _context;
 
-        public CoveragePlanController(CoveragePlanContext context)
+        public CoveragePlanController(InsuranceInfoContext context)
         {
             _context = context;
         }
@@ -23,14 +24,14 @@ namespace maple_web_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CoveragePlanItem>>> GetCoveragePlanItem()
         {
-            return await _context.CoveragePlanItem.ToListAsync();
+            return await _context.CoveragePlans.ToListAsync();
         }
 
         // GET: api/CoveragePlan/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CoveragePlanItem>> GetCoveragePlanItem(long id)
         {
-            var coveragePlanItem = await _context.CoveragePlanItem.FindAsync(id);
+            var coveragePlanItem = await _context.CoveragePlans.FindAsync(id);
 
             if (coveragePlanItem == null)
             {
@@ -78,7 +79,7 @@ namespace maple_web_api.Controllers
         [HttpPost]
         public async Task<ActionResult<CoveragePlanItem>> PostCoveragePlanItem(CoveragePlanItem coveragePlanItem)
         {
-            _context.CoveragePlanItem.Add(coveragePlanItem);
+            _context.CoveragePlans.Add(coveragePlanItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCoveragePlanItem", new { id = coveragePlanItem.PlanId }, coveragePlanItem);
@@ -88,13 +89,13 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<CoveragePlanItem>> DeleteCoveragePlanItem(long id)
         {
-            var coveragePlanItem = await _context.CoveragePlanItem.FindAsync(id);
+            var coveragePlanItem = await _context.CoveragePlans.FindAsync(id);
             if (coveragePlanItem == null)
             {
                 return NotFound();
             }
 
-            _context.CoveragePlanItem.Remove(coveragePlanItem);
+            _context.CoveragePlans.Remove(coveragePlanItem);
             await _context.SaveChangesAsync();
 
             return coveragePlanItem;
@@ -102,7 +103,7 @@ namespace maple_web_api.Controllers
 
         private bool CoveragePlanItemExists(long id)
         {
-            return _context.CoveragePlanItem.Any(e => e.PlanId == id);
+            return _context.CoveragePlans.Any(e => e.PlanId == id);
         }
     }
 }

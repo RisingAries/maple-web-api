@@ -13,9 +13,9 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class ContractItemsController : ControllerBase
     {
-        private readonly ContractContext _context;
+        private readonly InsuranceInfoContext _context;
 
-        public ContractItemsController(ContractContext context)
+        public ContractItemsController(InsuranceInfoContext context)
         {
             _context = context;
         }

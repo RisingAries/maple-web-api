@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using maple_web_api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,9 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly CustomerContext _context;
+        private readonly InsuranceInfoContext _context;
 
-        public CustomerController(CustomerContext context)
+        public CustomerController(InsuranceInfoContext context)
         {
             _context = context;
         }
@@ -21,14 +22,14 @@ namespace maple_web_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer()
         {
-            return await _context.Customer.ToListAsync();
+            return await _context.Customers.ToListAsync();
         }
 
         // GET: api/Customer/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(long id)
         {
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
 
             if (customer == null)
             {
@@ -76,7 +77,7 @@ namespace maple_web_api.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
         {
-            _context.Customer.Add(customer);
+            _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
@@ -86,13 +87,13 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> DeleteCustomer(long id)
         {
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
             }
 
-            _context.Customer.Remove(customer);
+            _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
 
             return customer;
@@ -100,7 +101,7 @@ namespace maple_web_api.Controllers
 
         private bool CustomerExists(long id)
         {
-            return _context.Customer.Any(e => e.CustomerId == id);
+            return _context.Customers.Any(e => e.CustomerId == id);
         }
     }
 }
