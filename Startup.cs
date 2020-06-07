@@ -20,12 +20,12 @@ namespace maple_web_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ContractContext>(opt =>
-               opt.UseInMemoryDatabase("ContractList"));
+            /* services.AddDbContext<ContractContext>(opt =>
+               opt.UseSqlServer("CustomerContext"));
             services.AddDbContext<CustomerContext>(opt =>
-                opt.UseInMemoryDatabase("CustomerList"));
+                opt.UseSqlServer("CustomerList"));
             services.AddDbContext<CoveragePlanContext>(opt =>
-                opt.UseInMemoryDatabase("CoveragePlanList"));
+                opt.UseSqlServer("CoveragePlanList")); */
 
             services.AddControllers();
 

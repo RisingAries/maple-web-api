@@ -44,7 +44,7 @@ namespace maple_web_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomer(long id, Customer customer)
         {
-            if (id != customer.Id)
+            if (id != customer.CustomerId)
             {
                 return BadRequest();
             }
@@ -79,7 +79,7 @@ namespace maple_web_api.Controllers
             _context.Customer.Add(customer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
+            return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
         }
 
         // DELETE: api/Customer/5
@@ -100,7 +100,7 @@ namespace maple_web_api.Controllers
 
         private bool CustomerExists(long id)
         {
-            return _context.Customer.Any(e => e.Id == id);
+            return _context.Customer.Any(e => e.CustomerId == id);
         }
     }
 }

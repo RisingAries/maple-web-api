@@ -46,7 +46,7 @@ namespace maple_web_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCoveragePlanItem(long id, CoveragePlanItem coveragePlanItem)
         {
-            if (id != coveragePlanItem.Id)
+            if (id != coveragePlanItem.PlanId)
             {
                 return BadRequest();
             }
@@ -81,7 +81,7 @@ namespace maple_web_api.Controllers
             _context.CoveragePlanItem.Add(coveragePlanItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCoveragePlanItem", new { id = coveragePlanItem.Id }, coveragePlanItem);
+            return CreatedAtAction("GetCoveragePlanItem", new { id = coveragePlanItem.PlanId }, coveragePlanItem);
         }
 
         // DELETE: api/CoveragePlan/5
@@ -102,7 +102,7 @@ namespace maple_web_api.Controllers
 
         private bool CoveragePlanItemExists(long id)
         {
-            return _context.CoveragePlanItem.Any(e => e.Id == id);
+            return _context.CoveragePlanItem.Any(e => e.PlanId == id);
         }
     }
 }

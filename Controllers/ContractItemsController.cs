@@ -47,7 +47,7 @@ namespace maple_web_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutContractItem(long id, ContractItem contractItem)
         {
-            if (id != contractItem.Id)
+            if (id != contractItem.ContractId)
             {
                 return BadRequest();
             }
@@ -82,7 +82,7 @@ namespace maple_web_api.Controllers
             _context.ContractItems.Add(contractItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetContractItem", new { id = contractItem.Id }, contractItem);
+            return CreatedAtAction("GetContractItem", new { id = contractItem.ContractId }, contractItem);
         }
 
         // DELETE: api/ContractItems/5
@@ -103,7 +103,7 @@ namespace maple_web_api.Controllers
 
         private bool ContractItemExists(long id)
         {
-            return _context.ContractItems.Any(e => e.Id == id);
+            return _context.ContractItems.Any(e => e.ContractId == id);
         }
     }
 }
