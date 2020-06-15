@@ -27,7 +27,7 @@ namespace maple_web_api
             services.AddDbContext<CoveragePlanContext>(opt =>
                 opt.UseSqlServer("CoveragePlanList")); */
 
-            services.AddControllers();
+            services.AddMvc().AddMvcOptions(opt => opt.EnableEndpointRouting = false);
             services.AddDbContext<InsuranceInfoContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
 
@@ -49,16 +49,9 @@ namespace maple_web_api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
 
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseStatusCodePages();
+            app.UseMvc();
         }
     }
 }
