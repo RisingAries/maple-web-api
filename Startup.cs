@@ -20,25 +20,18 @@ namespace maple_web_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /* services.AddDbContext<ContractContext>(opt =>
-               opt.UseSqlServer("CustomerContext"));
-            services.AddDbContext<CustomerContext>(opt =>
-                opt.UseSqlServer("CustomerList"));
-            services.AddDbContext<CoveragePlanContext>(opt =>
-                opt.UseSqlServer("CoveragePlanList")); */
-
             services.AddMvc().AddMvcOptions(opt => opt.EnableEndpointRouting = false);
             services.AddDbContext<InsuranceInfoContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
+            options.UseSqlServer(Configuration.GetConnectionString("MapleDB")));
 
             services.AddDbContext<CustomerContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
+                    options.UseSqlServer(Configuration.GetConnectionString("MapleDB")));
 
             services.AddDbContext<CoveragePlanContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("CoveragePlanContext")));
+                    options.UseSqlServer(Configuration.GetConnectionString("MapleDB")));
 
             services.AddDbContext<RateChartContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("RateChartContext")));
+                    options.UseSqlServer(Configuration.GetConnectionString("MapleDB")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
