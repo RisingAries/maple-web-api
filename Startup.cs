@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using maple_web_api.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace maple_web_api
 {
@@ -20,7 +21,11 @@ namespace maple_web_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddMvcOptions(opt => opt.EnableEndpointRouting = false);
+            services.AddMvc().AddMvcOptions(opt =>
+            {
+                opt.EnableEndpointRouting = false;
+                opt.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+            });
             services.AddDbContext<InsuranceInfoContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("MapleDB")));
 
