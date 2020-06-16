@@ -15,7 +15,7 @@ public class RateChartItem
     public CoveragePlanItem CoveragePlan { get; set; }
 
     [Required(ErrorMessage = "Gender is required")]
-    public string Gender { get; set; }
+    public Gender Gender { get; set; }
 
     [Required(ErrorMessage = "Cutoff Age is required")]
     public int CuttoffAge { get; set; }

@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using maple_web_api.Models;
@@ -22,16 +20,16 @@ namespace maple_web_api.Controllers
 
         // GET: api/ContractItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContractItem>>> GetContractItems()
+        public IActionResult GetContractItems()
         {
-            return await _context.ContractItems.ToListAsync();
+            return Ok(_context.ContractItems.ToListAsync());
         }
 
         // GET: api/ContractItems/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ContractItem>> GetContractItem(int id)
+        [HttpGet("{id}", Name = "GetContract")]
+        public IActionResult GetContractItem(int id)
         {
-            var contractItem = await _context.ContractItems.FindAsync(id);
+            var contractItem = _context.ContractItems.Find(id);
 
             if (contractItem == null)
             {
@@ -39,36 +37,61 @@ namespace maple_web_api.Controllers
             }
             contractItem.Customer = _context.Customers.Where(c => c.CustomerId == contractItem.CustomerId).First();
             contractItem.CoveragePlan = _context.CoveragePlans.Where(cp => cp.PlanId == contractItem.CoverageId).First();
-            return contractItem;
+            return Ok(contractItem);
         }
 
         // PUT: api/ContractItems/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutContractItem(int id, ContractItem contractItem)
+        [HttpPut()]
+        public IActionResult PutContractItem(string customerName, DateTime dob, string gender)
         {
-            if (id != contractItem.ContractId)
+            Customer customer = _context.Customers.Where(c => c.Name == customerName).FirstOrDefault();
+            if (customer == null)
             {
-                return BadRequest();
+                ModelState.AddModelError("Customer Name", "No Customer with this name!");
+                return BadRequest(ModelState);
             }
+            var planType = _context.CoveragePlans.Where(cp =>
+               cp.EligibilityCountry == customer.Country &&
+               cp.EligibilityDateFrom < customer.DateOfBirth &&
+               cp.EligibilityDateTo > customer.DateOfBirth).FirstOrDefault();
+            var age = DateTime.Now.Year - dob.Year;
+            if (planType == null)
+            {
+                ModelState.AddModelError("Coverage Plan", "Coverage Plan not found!");
+                return BadRequest(ModelState);
+            }
+            object g = null;
+            Gender cgender = (Gender)
+            (Enum.TryParse(typeof(Gender), gender, true, out g) ? g : Gender.Other);
+            var rate = _context.RateCharts.Where(ch =>
+             ch.Gender == cgender
+             && ch.CuttoffAge > age &&
+            ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
+            if (rate == null)
+            {
+                ModelState.AddModelError("Rate", "Rate not found!");
+                return BadRequest(ModelState);
+            }
+            var contractItem = new ContractItem
+            {
+                CustomerId = customer.CustomerId,
+                SaleDate = DateTime.Now.Date,
+                CoverageId = planType.PlanId,
+                NetPrice = rate.NetPrice
+            };
 
             _context.Entry(contractItem).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ContractItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
             return NoContent();
@@ -78,51 +101,64 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost()]
-        public async Task<ActionResult<ContractItem>> PostContractItem([FromForm] string customerName, [FromForm] Country country, [FromForm] DateTime dob, [FromForm] string gender, [FromForm] DateTime saleDate)
+        public IActionResult PostContractItem([FromBody] ContractDetailsForPostDto contractDetails)
         {
-            var customer = _context.Customers.Where(c => c.Name == customerName).FirstOrDefault();
+            var customer = _context.Customers.Where(c => c.Name == contractDetails.CustomerName).FirstOrDefault();
             if (customer == null)
             {
-                return NotFound();
+                ModelState.AddModelError("Customer Name", "Customer does not exist!");
+                return BadRequest(ModelState);
             }
-            var planType = _context.CoveragePlans.Where(cp => cp.EligibilityCountry == country && cp.EligibilityDateFrom < customer.DateOfBirth && cp.EligibilityDateTo > customer.DateOfBirth).FirstOrDefault();
-            var age = DateTime.Now.Year - dob.Year;
+            var planType = _context.CoveragePlans.Where(cp =>
+                cp.EligibilityCountry == contractDetails.CustomerCountry &&
+                cp.EligibilityDateFrom < customer.DateOfBirth &&
+                cp.EligibilityDateTo > customer.DateOfBirth).FirstOrDefault();
+            var age = DateTime.Now.Year - contractDetails.DOB.Year;
             if (planType == null)
             {
-                return NotFound();
+                ModelState.AddModelError("Coverage Plan", "Coverage Plan not found!");
+                return BadRequest(ModelState);
             }
-            var rate = _context.RateCharts.Where(ch => ch.Gender == gender && ch.CuttoffAge > age && ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
+            object g = null;
+            Gender gender = (Gender)
+            (Enum.TryParse(typeof(Gender), contractDetails.CustomerGender, true, out g) ? g : Gender.Other);
+            var rate = _context.RateCharts.Where(ch =>
+             ch.Gender == gender
+             && ch.CuttoffAge > age &&
+            ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
             if (rate == null)
             {
-                return NotFound();
+                ModelState.AddModelError("Rate", "Rate not found!");
+                return BadRequest(ModelState);
             }
             var contractItem = new ContractItem
             {
                 CustomerId = customer.CustomerId,
-                SaleDate = saleDate,
+                SaleDate = contractDetails.SaleDate,
                 CoverageId = planType.PlanId,
                 NetPrice = rate.NetPrice
             };
             _context.ContractItems.Add(contractItem);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return CreatedAtAction("GetContractItem", new { id = contractItem.ContractId }, contractItem);
+            return CreatedAtAction("GetContract", new { id = contractItem.ContractId }, contractItem);
         }
 
         // DELETE: api/ContractItems/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ContractItem>> DeleteContractItem(int id)
+        public IActionResult DeleteContractItem(int id)
         {
-            var contractItem = await _context.ContractItems.FindAsync(id);
+            var contractItem = _context.ContractItems.Find(id);
             if (contractItem == null)
             {
-                return NotFound();
+                ModelState.AddModelError("Id", "No Contract Found!");
+                return BadRequest(ModelState);
             }
 
             _context.ContractItems.Remove(contractItem);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return contractItem;
+            return NoContent();
         }
 
         private bool ContractItemExists(int id)

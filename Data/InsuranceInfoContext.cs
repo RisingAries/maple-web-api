@@ -40,7 +40,7 @@ namespace maple_web_api.Models
             modelBuilder.Entity<RateChartItem>().HasData(new RateChartItem
             {
                 PlanId = 1,
-                Gender = "M",
+                Gender = Gender.M,
                 CuttoffAge = 41,
                 NetPrice = 1000,
                 RateId = 1
@@ -49,7 +49,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 1,
-                Gender = "M",
+                Gender = Gender.M,
                 CuttoffAge = 200,
                 NetPrice = 2000,
                 RateId = 2
@@ -58,7 +58,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 1,
-                Gender = "F",
+                Gender = Gender.F,
                 CuttoffAge = 41,
                 NetPrice = 1200,
                 RateId = 3
@@ -67,7 +67,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 1,
-                Gender = "F",
+                Gender = Gender.F,
                 CuttoffAge = 200,
                 NetPrice = 2500,
                 RateId = 4
@@ -76,7 +76,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 3,
-                Gender = "M",
+                Gender = Gender.M,
                 CuttoffAge = 41,
                 NetPrice = 1500,
                 RateId = 5
@@ -85,7 +85,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 3,
-                Gender = "M",
+                Gender = Gender.M,
                 CuttoffAge = 200,
                 NetPrice = 2600,
                 RateId = 6
@@ -94,7 +94,7 @@ namespace maple_web_api.Models
            new RateChartItem
            {
                PlanId = 3,
-               Gender = "F",
+               Gender = Gender.F,
                CuttoffAge = 41,
                NetPrice = 1900,
                RateId = 7
@@ -103,7 +103,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 3,
-                Gender = "F",
+                Gender = Gender.F,
                 CuttoffAge = 200,
                 NetPrice = 2800,
                 RateId = 8
@@ -112,7 +112,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 2,
-                Gender = "M",
+                Gender = Gender.M,
                 CuttoffAge = 41,
                 NetPrice = 1900,
                 RateId = 9
@@ -121,7 +121,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 2,
-                Gender = "M",
+                Gender = Gender.M,
                 CuttoffAge = 200,
                 NetPrice = 2900,
                 RateId = 10
@@ -130,7 +130,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 2,
-                Gender = "F",
+                Gender = Gender.F,
                 CuttoffAge = 41,
                 NetPrice = 2100,
                 RateId = 11
@@ -139,7 +139,7 @@ namespace maple_web_api.Models
             new RateChartItem
             {
                 PlanId = 2,
-                Gender = "F",
+                Gender = Gender.F,
                 CuttoffAge = 200,
                 NetPrice = 3200,
                 RateId = 12
