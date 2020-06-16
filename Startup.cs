@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using maple_web_api.Models;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace maple_web_api
 {
@@ -25,7 +26,8 @@ namespace maple_web_api
             {
                 opt.EnableEndpointRouting = false;
                 opt.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
-            });
+
+            }).AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
             services.AddDbContext<InsuranceInfoContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("MapleDB")));
 

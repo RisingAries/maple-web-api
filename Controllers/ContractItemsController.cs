@@ -22,7 +22,7 @@ namespace maple_web_api.Controllers
         [HttpGet]
         public IActionResult GetContractItems()
         {
-            return Ok(_context.ContractItems.ToListAsync());
+            return Ok(_context.ContractItems.ToList());
         }
 
         // GET: api/ContractItems/5

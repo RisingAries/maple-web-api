@@ -14,7 +14,7 @@ public class Customer
     public DateTime DateOfBirth { get; set; }
 
     [Required(ErrorMessage = "Gender is required")]
-    public string Gender { get; set; }
+    public Gender Gender { get; set; }
 
     public string Address { get; set; }
 
