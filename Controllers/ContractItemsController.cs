@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using maple_web_api.Models;
+using Microsoft.Extensions.Logging;
 
 namespace maple_web_api.Controllers
 {
@@ -11,7 +12,12 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class ContractItemsController : ControllerBase
     {
+        public ContractItemsController(Logger<ContractItemsController> logger)
+        {
+            _logger = logger;
+        }
         private readonly InsuranceInfoContext _context;
+        private readonly Logger<ContractItemsController> _logger;
 
         public ContractItemsController(InsuranceInfoContext context)
         {
@@ -33,6 +39,7 @@ namespace maple_web_api.Controllers
 
             if (contractItem == null)
             {
+                _logger.LogInformation($"Contract with id {id} not found.");
                 return NotFound();
             }
             contractItem.Customer = _context.Customers.Where(c => c.CustomerId == contractItem.CustomerId).First();
@@ -49,6 +56,7 @@ namespace maple_web_api.Controllers
             Customer customer = _context.Customers.Where(c => c.Name == customerName).FirstOrDefault();
             if (customer == null)
             {
+                _logger.LogInformation($"Customer with name {customerName} not found.");
                 ModelState.AddModelError("Customer Name", "No Customer with this name!");
                 return BadRequest(ModelState);
             }
@@ -57,8 +65,10 @@ namespace maple_web_api.Controllers
                cp.EligibilityDateFrom < customer.DateOfBirth &&
                cp.EligibilityDateTo > customer.DateOfBirth).FirstOrDefault();
             var age = DateTime.Now.Year - dob.Year;
+
             if (planType == null)
             {
+                _logger.LogInformation($"Suitable Coverage Plan for the provided parameters not found.");
                 ModelState.AddModelError("Coverage Plan", "Coverage Plan not found!");
                 return BadRequest(ModelState);
             }
@@ -71,6 +81,7 @@ namespace maple_web_api.Controllers
             ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
             if (rate == null)
             {
+                _logger.LogInformation($"Rate not found for the Plan Id {planType.PlanId}.");
                 ModelState.AddModelError("Rate", "Rate not found!");
                 return BadRequest(ModelState);
             }
@@ -88,10 +99,10 @@ namespace maple_web_api.Controllers
             {
                 _context.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-
-                throw;
+                _logger.LogCritical("Database update concurrency exception thrown", ex);
+                return StatusCode(500, "Internal Server Error has occurred.");
             }
 
             return NoContent();
@@ -106,6 +117,7 @@ namespace maple_web_api.Controllers
             var customer = _context.Customers.Where(c => c.Name == contractDetails.CustomerName).FirstOrDefault();
             if (customer == null)
             {
+                _logger.LogInformation($"Customer with name {contractDetails.CustomerName} not found.");
                 ModelState.AddModelError("Customer Name", "Customer does not exist!");
                 return BadRequest(ModelState);
             }
@@ -116,6 +128,7 @@ namespace maple_web_api.Controllers
             var age = DateTime.Now.Year - contractDetails.DOB.Year;
             if (planType == null)
             {
+                _logger.LogInformation("Suitable Coverage Plan not found for provided paramters.");
                 ModelState.AddModelError("Coverage Plan", "Coverage Plan not found!");
                 return BadRequest(ModelState);
             }
@@ -128,6 +141,7 @@ namespace maple_web_api.Controllers
             ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
             if (rate == null)
             {
+                _logger.LogInformation($"Rate not found for Plan Id {planType.PlanId}.");
                 ModelState.AddModelError("Rate", "Rate not found!");
                 return BadRequest(ModelState);
             }
@@ -151,6 +165,7 @@ namespace maple_web_api.Controllers
             var contractItem = _context.ContractItems.Find(id);
             if (contractItem == null)
             {
+                _logger.LogInformation($"No contract found with id {id}.");
                 ModelState.AddModelError("Id", "No Contract Found!");
                 return BadRequest(ModelState);
             }
