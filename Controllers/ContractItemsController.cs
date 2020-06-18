@@ -12,16 +12,13 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class ContractItemsController : ControllerBase
     {
-        public ContractItemsController(Logger<ContractItemsController> logger)
-        {
-            _logger = logger;
-        }
         private readonly InsuranceInfoContext _context;
-        private readonly Logger<ContractItemsController> _logger;
+        private readonly ILogger<ContractItemsController> _logger;
 
-        public ContractItemsController(InsuranceInfoContext context)
+        public ContractItemsController(InsuranceInfoContext context, ILogger<ContractItemsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/ContractItems

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog.Web;
 
 namespace maple_web_api
 {
@@ -17,7 +18,7 @@ namespace maple_web_api
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
+            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             var scope = host.Services.CreateScope();
             try
             {
@@ -26,7 +27,7 @@ namespace maple_web_api
             }
             catch (Exception ex)
             {
-                throw ex;
+                logger.Error(ex, "Application stopped because of error.");
             }
             host.Run();
         }
@@ -35,7 +36,7 @@ namespace maple_web_api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>().UseNLog();
                 });
     }
 }
