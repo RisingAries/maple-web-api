@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using maple_web_api.Models;
 using Microsoft.Extensions.Logging;
+using maple_web_api.Services;
 
 namespace maple_web_api.Controllers
 {
@@ -12,12 +13,12 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class ContractItemsController : ControllerBase
     {
-        private readonly InsuranceInfoContext _context;
+        private readonly IInsuranceInfoRepository _repository;
         private readonly ILogger<ContractItemsController> _logger;
 
-        public ContractItemsController(InsuranceInfoContext context, ILogger<ContractItemsController> logger)
+        public ContractItemsController(IInsuranceInfoRepository repository, ILogger<ContractItemsController> logger)
         {
-            _context = context;
+            _repository = repository;
             _logger = logger;
         }
 
@@ -25,22 +26,22 @@ namespace maple_web_api.Controllers
         [HttpGet]
         public IActionResult GetContractItems()
         {
-            return Ok(_context.ContractItems.ToList());
+            return Ok(_repository.GetContracts());
         }
 
         // GET: api/ContractItems/5
         [HttpGet("{id}", Name = "GetContract")]
         public IActionResult GetContractItem(int id)
         {
-            var contractItem = _context.ContractItems.Find(id);
+            var contractItem = _repository.GetContract(id);
 
             if (contractItem == null)
             {
                 _logger.LogInformation($"Contract with id {id} not found.");
                 return NotFound();
             }
-            contractItem.Customer = _context.Customers.Where(c => c.CustomerId == contractItem.CustomerId).First();
-            contractItem.CoveragePlan = _context.CoveragePlans.Where(cp => cp.PlanId == contractItem.CoverageId).First();
+            /*    contractItem.Customer = _repository.GetCustomer(contractItem.CustomerId);
+               contractItem.CoveragePlan = _repository.GetCoveragePlan(contractItem.ContractId); */
             return Ok(contractItem);
         }
 
@@ -50,17 +51,14 @@ namespace maple_web_api.Controllers
         [HttpPut()]
         public IActionResult PutContractItem(string customerName, DateTime dob, string gender)
         {
-            Customer customer = _context.Customers.Where(c => c.Name == customerName).FirstOrDefault();
+            Customer customer = _repository.GetCustomerByName(customerName);
             if (customer == null)
             {
                 _logger.LogInformation($"Customer with name {customerName} not found.");
                 ModelState.AddModelError("Customer Name", "No Customer with this name!");
                 return BadRequest(ModelState);
             }
-            var planType = _context.CoveragePlans.Where(cp =>
-               cp.EligibilityCountry == customer.Country &&
-               cp.EligibilityDateFrom < customer.DateOfBirth &&
-               cp.EligibilityDateTo > customer.DateOfBirth).FirstOrDefault();
+            var planType = _repository.GetCoveragePlan(customer.Country, customer.DateOfBirth);
             var age = DateTime.Now.Year - dob.Year;
 
             if (planType == null)
@@ -72,10 +70,7 @@ namespace maple_web_api.Controllers
             object g = null;
             Gender cgender = (Gender)
             (Enum.TryParse(typeof(Gender), gender, true, out g) ? g : Gender.Other);
-            var rate = _context.RateCharts.Where(ch =>
-             ch.Gender == cgender
-             && ch.CuttoffAge > age &&
-            ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
+            var rate = _repository.GetRate(cgender, age, planType);
             if (rate == null)
             {
                 _logger.LogInformation($"Rate not found for the Plan Id {planType.PlanId}.");
@@ -90,17 +85,7 @@ namespace maple_web_api.Controllers
                 NetPrice = rate.NetPrice
             };
 
-            _context.Entry(contractItem).State = EntityState.Modified;
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _logger.LogCritical("Database update concurrency exception thrown", ex);
-                return StatusCode(500, "Internal Server Error has occurred.");
-            }
+            _repository.EditContract(contractItem);
 
             return NoContent();
         }
@@ -111,17 +96,14 @@ namespace maple_web_api.Controllers
         [HttpPost()]
         public IActionResult PostContractItem([FromBody] ContractDetailsForPostDto contractDetails)
         {
-            var customer = _context.Customers.Where(c => c.Name == contractDetails.CustomerName).FirstOrDefault();
+            var customer = _repository.GetCustomerByName(contractDetails.CustomerName);
             if (customer == null)
             {
                 _logger.LogInformation($"Customer with name {contractDetails.CustomerName} not found.");
                 ModelState.AddModelError("Customer Name", "Customer does not exist!");
                 return BadRequest(ModelState);
             }
-            var planType = _context.CoveragePlans.Where(cp =>
-                cp.EligibilityCountry == contractDetails.CustomerCountry &&
-                cp.EligibilityDateFrom < customer.DateOfBirth &&
-                cp.EligibilityDateTo > customer.DateOfBirth).FirstOrDefault();
+            var planType = _repository.GetCoveragePlan(contractDetails.CustomerCountry, customer.DateOfBirth);
             var age = DateTime.Now.Year - contractDetails.DOB.Year;
             if (planType == null)
             {
@@ -132,10 +114,7 @@ namespace maple_web_api.Controllers
             object g = null;
             Gender gender = (Gender)
             (Enum.TryParse(typeof(Gender), contractDetails.CustomerGender, true, out g) ? g : Gender.Other);
-            var rate = _context.RateCharts.Where(ch =>
-             ch.Gender == gender
-             && ch.CuttoffAge > age &&
-            ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
+            var rate = _repository.GetRate(gender, age, planType);
             if (rate == null)
             {
                 _logger.LogInformation($"Rate not found for Plan Id {planType.PlanId}.");
@@ -149,8 +128,17 @@ namespace maple_web_api.Controllers
                 CoverageId = planType.PlanId,
                 NetPrice = rate.NetPrice
             };
-            _context.ContractItems.Add(contractItem);
-            _context.SaveChanges();
+            try
+            {
+                _repository.SaveContract(contractItem);
+
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogCritical("Database update concurrency exception thrown", ex);
+                return StatusCode(500, "Internal Server Error has occurred.");
+            }
+
 
             return CreatedAtAction("GetContract", new { id = contractItem.ContractId }, contractItem);
         }
@@ -159,23 +147,21 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteContractItem(int id)
         {
-            var contractItem = _context.ContractItems.Find(id);
+            var contractItem = _repository.GetContract(id);
             if (contractItem == null)
             {
                 _logger.LogInformation($"No contract found with id {id}.");
                 ModelState.AddModelError("Id", "No Contract Found!");
                 return BadRequest(ModelState);
             }
-
-            _context.ContractItems.Remove(contractItem);
-            _context.SaveChanges();
+            _repository.DeleteContract(contractItem);
 
             return NoContent();
         }
 
         private bool ContractItemExists(int id)
         {
-            return _context.ContractItems.Any(e => e.ContractId == id);
+            return _repository.GetContracts().Any(e => e.ContractId == id);
         }
     }
 }
