@@ -114,9 +114,8 @@ namespace maple_web_api.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -137,9 +136,8 @@ namespace maple_web_api.Migrations
                     b.Property<int>("CuttoffAge")
                         .HasColumnType("int");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<int>("NetPrice")
                         .HasColumnType("int");
@@ -158,7 +156,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 1L,
                             CuttoffAge = 41,
-                            Gender = "M",
+                            Gender = 0,
                             NetPrice = 1000,
                             PlanId = 1
                         },
@@ -166,7 +164,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 2L,
                             CuttoffAge = 200,
-                            Gender = "M",
+                            Gender = 0,
                             NetPrice = 2000,
                             PlanId = 1
                         },
@@ -174,7 +172,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 3L,
                             CuttoffAge = 41,
-                            Gender = "F",
+                            Gender = 1,
                             NetPrice = 1200,
                             PlanId = 1
                         },
@@ -182,7 +180,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 4L,
                             CuttoffAge = 200,
-                            Gender = "F",
+                            Gender = 1,
                             NetPrice = 2500,
                             PlanId = 1
                         },
@@ -190,7 +188,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 5L,
                             CuttoffAge = 41,
-                            Gender = "M",
+                            Gender = 0,
                             NetPrice = 1500,
                             PlanId = 3
                         },
@@ -198,7 +196,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 6L,
                             CuttoffAge = 200,
-                            Gender = "M",
+                            Gender = 0,
                             NetPrice = 2600,
                             PlanId = 3
                         },
@@ -206,7 +204,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 7L,
                             CuttoffAge = 41,
-                            Gender = "F",
+                            Gender = 1,
                             NetPrice = 1900,
                             PlanId = 3
                         },
@@ -214,7 +212,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 8L,
                             CuttoffAge = 200,
-                            Gender = "F",
+                            Gender = 1,
                             NetPrice = 2800,
                             PlanId = 3
                         },
@@ -222,7 +220,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 9L,
                             CuttoffAge = 41,
-                            Gender = "M",
+                            Gender = 0,
                             NetPrice = 1900,
                             PlanId = 2
                         },
@@ -230,7 +228,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 10L,
                             CuttoffAge = 200,
-                            Gender = "M",
+                            Gender = 0,
                             NetPrice = 2900,
                             PlanId = 2
                         },
@@ -238,7 +236,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 11L,
                             CuttoffAge = 41,
-                            Gender = "F",
+                            Gender = 1,
                             NetPrice = 2100,
                             PlanId = 2
                         },
@@ -246,7 +244,7 @@ namespace maple_web_api.Migrations
                         {
                             RateId = 12L,
                             CuttoffAge = 200,
-                            Gender = "F",
+                            Gender = 1,
                             NetPrice = 3200,
                             PlanId = 2
                         });

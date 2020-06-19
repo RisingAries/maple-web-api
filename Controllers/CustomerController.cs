@@ -20,30 +20,30 @@ namespace maple_web_api.Controllers
 
         // GET: api/Customer
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer()
+        public IActionResult GetCustomer()
         {
-            return await _context.Customers.ToListAsync();
+            return Ok(_context.Customers.ToList());
         }
 
         // GET: api/Customer/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(long id)
+        public IActionResult GetCustomer(long id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = _context.Customers.Find(id);
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return customer;
+            return Ok(customer);
         }
 
         // PUT: api/Customer/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(int id, Customer customer)
+        public IActionResult PutCustomer(int id, Customer customer)
         {
             if (id != customer.CustomerId)
             {
@@ -54,7 +54,7 @@ namespace maple_web_api.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -64,7 +64,7 @@ namespace maple_web_api.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500, "Internal Server error has occurred!");
                 }
             }
 
@@ -75,28 +75,28 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer([FromBody] Customer customer)
+        public IActionResult PostCustomer([FromBody] Customer customer)
         {
             _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
         }
 
         // DELETE: api/Customer/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Customer>> DeleteCustomer(int id)
+        public IActionResult DeleteCustomer(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = _context.Customers.Find(id);
             if (customer == null)
             {
                 return NotFound();
             }
 
             _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return customer;
+            return NoContent();
         }
 
         private bool CustomerExists(int id)

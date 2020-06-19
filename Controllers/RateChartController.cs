@@ -20,30 +20,30 @@ namespace maple_web_api.Controllers
 
         // GET: api/RateChart
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RateChartItem>>> GetRateChartItem()
+        public IActionResult GetRateChartItem()
         {
-            return await _context.RateCharts.ToListAsync();
+            return Ok(_context.RateCharts.ToList());
         }
 
         // GET: api/RateChart/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RateChartItem>> GetRateChartItem(int id)
+        public IActionResult GetRateChartItem(int id)
         {
-            var rateChartItem = await _context.RateCharts.FindAsync(id);
+            var rateChartItem = _context.RateCharts.Find(id);
 
             if (rateChartItem == null)
             {
                 return NotFound();
             }
 
-            return rateChartItem;
+            return Ok(rateChartItem);
         }
 
         // PUT: api/RateChart/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRateChartItem(int id, RateChartItem rateChartItem)
+        public IActionResult PutRateChartItem(int id, RateChartItem rateChartItem)
         {
             if (id != rateChartItem.RateId)
             {
@@ -54,7 +54,7 @@ namespace maple_web_api.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -64,7 +64,7 @@ namespace maple_web_api.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500, "Internal Server error has occurred!");
                 }
             }
 
@@ -75,28 +75,28 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<RateChartItem>> PostRateChartItem(RateChartItem rateChartItem)
+        public IActionResult PostRateChartItem(RateChartItem rateChartItem)
         {
             _context.RateCharts.Add(rateChartItem);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return CreatedAtAction("GetRateChartItem", new { id = rateChartItem.RateId }, rateChartItem);
         }
 
         // DELETE: api/RateChart/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<RateChartItem>> DeleteRateChartItem(int id)
+        public IActionResult DeleteRateChartItem(int id)
         {
-            var rateChartItem = await _context.RateCharts.FindAsync(id);
+            var rateChartItem = _context.RateCharts.Find(id);
             if (rateChartItem == null)
             {
                 return NotFound();
             }
 
             _context.RateCharts.Remove(rateChartItem);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
-            return rateChartItem;
+            return NoContent();
         }
 
         private bool RateChartItemExists(int id)

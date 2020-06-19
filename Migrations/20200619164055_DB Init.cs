@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace maple_web_api.Migrations
 {
-    public partial class CoveragePlanUpdate : Migration
+    public partial class DBInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,7 +31,7 @@ namespace maple_web_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
                     DateOfBirth = table.Column<DateTime>(nullable: false),
-                    Gender = table.Column<string>(nullable: false),
+                    Gender = table.Column<int>(nullable: false),
                     Address = table.Column<string>(nullable: true),
                     Country = table.Column<int>(nullable: false)
                 },
@@ -47,7 +47,7 @@ namespace maple_web_api.Migrations
                     RateId = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PlanId = table.Column<int>(nullable: false),
-                    Gender = table.Column<string>(nullable: false),
+                    Gender = table.Column<int>(nullable: false),
                     CuttoffAge = table.Column<int>(nullable: false),
                     NetPrice = table.Column<int>(nullable: false)
                 },
@@ -110,18 +110,18 @@ namespace maple_web_api.Migrations
                 columns: new[] { "RateId", "CuttoffAge", "Gender", "NetPrice", "PlanId" },
                 values: new object[,]
                 {
-                    { 1L, 41, "M", 1000, 1 },
-                    { 2L, 200, "M", 2000, 1 },
-                    { 3L, 41, "F", 1200, 1 },
-                    { 4L, 200, "F", 2500, 1 },
-                    { 9L, 41, "M", 1900, 2 },
-                    { 10L, 200, "M", 2900, 2 },
-                    { 11L, 41, "F", 2100, 2 },
-                    { 12L, 200, "F", 3200, 2 },
-                    { 5L, 41, "M", 1500, 3 },
-                    { 6L, 200, "M", 2600, 3 },
-                    { 7L, 41, "F", 1900, 3 },
-                    { 8L, 200, "F", 2800, 3 }
+                    { 1L, 41, 0, 1000, 1 },
+                    { 2L, 200, 0, 2000, 1 },
+                    { 3L, 41, 1, 1200, 1 },
+                    { 4L, 200, 1, 2500, 1 },
+                    { 9L, 41, 0, 1900, 2 },
+                    { 10L, 200, 0, 2900, 2 },
+                    { 11L, 41, 1, 2100, 2 },
+                    { 12L, 200, 1, 3200, 2 },
+                    { 5L, 41, 0, 1500, 3 },
+                    { 6L, 200, 0, 2600, 3 },
+                    { 7L, 41, 1, 1900, 3 },
+                    { 8L, 200, 1, 2800, 3 }
                 });
 
             migrationBuilder.CreateIndex(
