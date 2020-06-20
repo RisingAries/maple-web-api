@@ -32,36 +32,36 @@ namespace maple_web_api.Services
             return this._context.Customers.ToList();
         }
 
-        CoveragePlanItem IInsuranceInfoRepository.GetCoveragePlan(int Id)
+        public CoveragePlanItem GetCoveragePlan(int Id)
         {
             return this._context.CoveragePlans.Find(Id);
         }
 
-        IEnumerable<CoveragePlanItem> IInsuranceInfoRepository.GetCoveragePlans()
+        public IEnumerable<CoveragePlanItem> GetCoveragePlans()
         {
             return this._context.CoveragePlans.ToList();
         }
 
-        Customer IInsuranceInfoRepository.GetCustomer(int Id)
+        public Customer GetCustomer(int Id)
         {
             return this._context.Customers.Find(Id);
         }
 
-        RateChartItem IInsuranceInfoRepository.GetRate(int Id)
+        public RateChartItem GetRate(int Id)
         {
             return this._context.RateCharts.Find(Id);
         }
 
-        IEnumerable<RateChartItem> IInsuranceInfoRepository.GetRates()
+        public IEnumerable<RateChartItem> GetRates()
         {
-            return this._context.RateCharts.ToList();
+            return this._context.RateCharts.Include(rc => rc.CoveragePlan).ToList();
         }
-        Customer IInsuranceInfoRepository.GetCustomerByName(string CustomerName)
+        public Customer GetCustomerByName(string CustomerName)
         {
             return this._context.Customers.Where(c => c.Name == CustomerName).FirstOrDefault();
         }
 
-        CoveragePlanItem IInsuranceInfoRepository.GetCoveragePlan(Country country, System.DateTime DOB)
+        public CoveragePlanItem GetCoveragePlan(Country country, System.DateTime DOB)
         {
             return this._context.CoveragePlans.Where(cp =>
                cp.EligibilityCountry == country &&
@@ -69,15 +69,15 @@ namespace maple_web_api.Services
                cp.EligibilityDateTo > DOB).FirstOrDefault();
         }
 
-        RateChartItem IInsuranceInfoRepository.GetRate(Gender cgender, int age, CoveragePlanItem planType)
+        public RateChartItem GetRate(Gender cgender, int age, CoveragePlanItem planType)
         {
-            return this._context.RateCharts.Where(ch =>
+            return this._context.RateCharts.Include(rc => rc.CoveragePlan).Where(ch =>
              ch.Gender == cgender
              && ch.CuttoffAge > age &&
             ch.CoveragePlan.PlanId == planType.PlanId).FirstOrDefault();
         }
 
-        void IInsuranceInfoRepository.EditContract(ContractItem contractItem)
+        public void EditContract(ContractItem contractItem)
         {
             _context.Entry(contractItem).State = EntityState.Modified;
             try
@@ -90,16 +90,99 @@ namespace maple_web_api.Services
             }
         }
 
-        void IInsuranceInfoRepository.SaveContract(ContractItem contractItem)
+        public void SaveContract(ContractItem contractItem)
         {
 
             _context.ContractItems.Add(contractItem);
             _context.SaveChanges();
         }
 
-        void IInsuranceInfoRepository.DeleteContract(ContractItem contractItem)
+        public void DeleteContract(ContractItem contractItem)
         {
             _context.ContractItems.Remove(contractItem);
+            _context.SaveChanges();
+
+        }
+
+        public void EditCoveragePlan(int id, CoveragePlanItem coveragePlan)
+        {
+
+            _context.Entry(coveragePlan).State = EntityState.Modified;
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        public void SaveCoveragePlan(CoveragePlanItem coveragePlanItem)
+        {
+            _context.CoveragePlans.Add(coveragePlanItem);
+            _context.SaveChanges();
+        }
+
+        public void DeleteCoveragePlan(CoveragePlanItem coveragePlanItem)
+        {
+            _context.CoveragePlans.Remove(coveragePlanItem);
+            _context.SaveChanges();
+        }
+
+        public void EditCustomer(Customer customer)
+        {
+            _context.Entry(customer).State = EntityState.Modified;
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void SaveCustomer(Customer customer)
+        {
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+        }
+
+        public void DeleteCustomer(Customer customer)
+        {
+
+            _context.Customers.Remove(customer);
+            _context.SaveChanges();
+        }
+
+        public void EditRate(RateChartItem rateChartItem)
+        {
+
+            _context.Entry(rateChartItem).State = EntityState.Modified;
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void SaveRate(RateChartItem rateChartItem)
+        {
+            _context.RateCharts.Add(rateChartItem);
+            _context.SaveChanges();
+        }
+
+        public void DeleteRate(RateChartItem rateChartItem)
+        {
+
+            _context.RateCharts.Remove(rateChartItem);
             _context.SaveChanges();
 
         }

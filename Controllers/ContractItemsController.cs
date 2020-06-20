@@ -161,7 +161,7 @@ namespace maple_web_api.Controllers
 
         private bool ContractItemExists(int id)
         {
-            return _repository.GetContracts().Any(e => e.ContractId == id);
+            return _repository.GetContract(id) != null ? true : false;
         }
     }
 }

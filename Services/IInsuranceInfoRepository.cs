@@ -30,5 +30,21 @@ namespace maple_web_api.Services
         void SaveContract(ContractItem contractItem);
 
         void DeleteContract(ContractItem contractItem);
+
+        void EditCoveragePlan(int id, CoveragePlanItem coveragePlan);
+
+        void SaveCoveragePlan(CoveragePlanItem coveragePlanItem);
+
+        void DeleteCoveragePlan(CoveragePlanItem coveragePlanItem);
+
+        void EditCustomer(Customer customer);
+
+        void SaveCustomer(Customer customer);
+        void DeleteCustomer(Customer customer);
+
+        void EditRate(RateChartItem rateChartItem);
+
+        void SaveRate(RateChartItem rateChartItem);
+        void DeleteRate(RateChartItem rateChartItem);
     }
 }

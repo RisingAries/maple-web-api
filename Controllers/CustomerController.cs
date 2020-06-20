@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using maple_web_api.Models;
+using maple_web_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,25 +12,25 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly InsuranceInfoContext _context;
+        private readonly IInsuranceInfoRepository _repository;
 
-        public CustomerController(InsuranceInfoContext context)
+        public CustomerController(IInsuranceInfoRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/Customer
         [HttpGet]
         public IActionResult GetCustomer()
         {
-            return Ok(_context.Customers.ToList());
+            return Ok(_repository.GetCustomers());
         }
 
         // GET: api/Customer/5
         [HttpGet("{id}")]
-        public IActionResult GetCustomer(long id)
+        public IActionResult GetCustomer(int id)
         {
-            var customer = _context.Customers.Find(id);
+            var customer = _repository.GetCustomer(id);
 
             if (customer == null)
             {
@@ -49,12 +50,9 @@ namespace maple_web_api.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(customer).State = EntityState.Modified;
-
             try
             {
-                _context.SaveChanges();
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,6 +65,8 @@ namespace maple_web_api.Controllers
                     return StatusCode(500, "Internal Server error has occurred!");
                 }
             }
+            _repository.EditCustomer(customer);
+
 
             return NoContent();
         }
@@ -77,8 +77,7 @@ namespace maple_web_api.Controllers
         [HttpPost]
         public IActionResult PostCustomer([FromBody] Customer customer)
         {
-            _context.Customers.Add(customer);
-            _context.SaveChanges();
+            _repository.SaveCustomer(customer);
 
             return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
         }
@@ -87,21 +86,19 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteCustomer(int id)
         {
-            var customer = _context.Customers.Find(id);
+            var customer = _repository.GetCustomer(id);
             if (customer == null)
             {
                 return NotFound();
             }
-
-            _context.Customers.Remove(customer);
-            _context.SaveChanges();
+            _repository.DeleteCustomer(customer);
 
             return NoContent();
         }
 
         private bool CustomerExists(int id)
         {
-            return _context.Customers.Any(e => e.CustomerId == id);
+            return _repository.GetCustomers().Any(e => e.CustomerId == id);
         }
     }
 }

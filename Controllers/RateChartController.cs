@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using maple_web_api.Models;
+using maple_web_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,25 +12,25 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class RateChartController : ControllerBase
     {
-        private readonly InsuranceInfoContext _context;
+        private readonly IInsuranceInfoRepository _repository;
 
-        public RateChartController(InsuranceInfoContext context)
+        public RateChartController(IInsuranceInfoRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/RateChart
         [HttpGet]
         public IActionResult GetRateChartItem()
         {
-            return Ok(_context.RateCharts.ToList());
+            return Ok(_repository.GetRates());
         }
 
         // GET: api/RateChart/5
         [HttpGet("{id}")]
         public IActionResult GetRateChartItem(int id)
         {
-            var rateChartItem = _context.RateCharts.Find(id);
+            var rateChartItem = _repository.GetRate(id);
 
             if (rateChartItem == null)
             {
@@ -49,12 +50,9 @@ namespace maple_web_api.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(rateChartItem).State = EntityState.Modified;
-
             try
             {
-                _context.SaveChanges();
+                _repository.EditRate(rateChartItem);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -77,8 +75,8 @@ namespace maple_web_api.Controllers
         [HttpPost]
         public IActionResult PostRateChartItem(RateChartItem rateChartItem)
         {
-            _context.RateCharts.Add(rateChartItem);
-            _context.SaveChanges();
+            _repository.SaveRate(rateChartItem);
+
 
             return CreatedAtAction("GetRateChartItem", new { id = rateChartItem.RateId }, rateChartItem);
         }
@@ -87,21 +85,18 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteRateChartItem(int id)
         {
-            var rateChartItem = _context.RateCharts.Find(id);
+            var rateChartItem = _repository.GetRate(id);
             if (rateChartItem == null)
             {
                 return NotFound();
             }
-
-            _context.RateCharts.Remove(rateChartItem);
-            _context.SaveChanges();
-
+            _repository.DeleteRate(rateChartItem);
             return NoContent();
         }
 
         private bool RateChartItemExists(int id)
         {
-            return _context.RateCharts.Any(e => e.RateId == id);
+            return _repository.GetRate(id) != null ? true : false;
         }
     }
 }

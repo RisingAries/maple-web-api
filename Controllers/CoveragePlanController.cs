@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using maple_web_api.Models;
+using maple_web_api.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,25 +14,25 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class CoveragePlanController : ControllerBase
     {
-        private readonly InsuranceInfoContext _context;
+        private readonly IInsuranceInfoRepository _respository;
 
-        public CoveragePlanController(InsuranceInfoContext context)
+        public CoveragePlanController(IInsuranceInfoRepository context)
         {
-            _context = context;
+            _respository = context;
         }
 
         // GET: api/CoveragePlan
         [HttpGet]
         public IActionResult GetCoveragePlanItem()
         {
-            return Ok(_context.CoveragePlans.ToList<CoveragePlanItem>());
+            return Ok(_respository.GetCoveragePlans());
         }
 
         // GET: api/CoveragePlan/5
         [HttpGet("{id}")]
         public IActionResult GetCoveragePlanItem(int id)
         {
-            var coveragePlanItem = _context.CoveragePlans.Find(id);
+            var coveragePlanItem = _respository.GetCoveragePlan(id);
 
             if (coveragePlanItem == null)
             {
@@ -51,13 +52,11 @@ namespace maple_web_api.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(coveragePlanItem).State = EntityState.Modified;
-
             try
             {
-                _context.SaveChanges();
+                _respository.EditCoveragePlan(id, coveragePlanItem);
             }
+
             catch (DbUpdateConcurrencyException)
             {
                 if (!CoveragePlanItemExists(id))
@@ -69,7 +68,6 @@ namespace maple_web_api.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
@@ -79,8 +77,8 @@ namespace maple_web_api.Controllers
         [HttpPost]
         public IActionResult PostCoveragePlanItem(CoveragePlanItem coveragePlanItem)
         {
-            _context.CoveragePlans.Add(coveragePlanItem);
-            _context.SaveChanges();
+            _respository.SaveCoveragePlan(coveragePlanItem);
+
 
             return CreatedAtAction("GetCoveragePlanItem", new { id = coveragePlanItem.PlanId }, coveragePlanItem);
         }
@@ -89,21 +87,20 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteCoveragePlanItem(int id)
         {
-            var coveragePlanItem = _context.CoveragePlans.Find(id);
+            var coveragePlanItem = _respository.GetCoveragePlan(id);
             if (coveragePlanItem == null)
             {
                 return NotFound();
             }
 
-            _context.CoveragePlans.Remove(coveragePlanItem);
-            _context.SaveChanges();
+            _respository.DeleteCoveragePlan(coveragePlanItem);
 
             return NoContent();
         }
 
         private bool CoveragePlanItemExists(int id)
         {
-            return _context.CoveragePlans.Any(e => e.PlanId == id);
+            return _respository.GetCoveragePlan(id) != null ? true : false;
         }
     }
 }
