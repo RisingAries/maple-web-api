@@ -1,6 +1,7 @@
 using maple_web_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace maple_web_api.Controllers
 {
@@ -10,9 +11,12 @@ namespace maple_web_api.Controllers
     {
         private readonly IInsuranceInfoRepository _repository;
 
-        public CoveragePlanController(IInsuranceInfoRepository context)
+        private readonly ILogger<ContractItemsController> _logger;
+
+        public CoveragePlanController(IInsuranceInfoRepository context, ILogger<ContractItemsController> logger)
         {
             _repository = context;
+            _logger = logger;
         }
 
         // GET: api/CoveragePlan
@@ -30,6 +34,7 @@ namespace maple_web_api.Controllers
 
             if (coveragePlanItem == null)
             {
+                _logger.LogInformation($"Unable to find Coverage Plan with Id {id}.");
                 return NotFound();
             }
 
@@ -44,6 +49,7 @@ namespace maple_web_api.Controllers
         {
             if (id != coveragePlanItem.PlanId)
             {
+                _logger.LogInformation($"{id} does not match coveragePlanItem.id = {coveragePlanItem.PlanId}.");
                 return BadRequest();
             }
             try
@@ -69,7 +75,7 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public IActionResult PostCoveragePlanItem(CoveragePlanItem coveragePlanItem)
+        public IActionResult PostCoveragePlanItem([FromBody] CoveragePlanItem coveragePlanItem)
         {
             _repository.SaveCoveragePlan(coveragePlanItem);
 
