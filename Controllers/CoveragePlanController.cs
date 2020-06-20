@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using maple_web_api.Models;
 using maple_web_api.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,7 +23,7 @@ namespace maple_web_api.Controllers
         }
 
         // GET: api/CoveragePlan/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCoveragePlanItem")]
         public IActionResult GetCoveragePlanItem(int id)
         {
             var coveragePlanItem = _repository.GetCoveragePlan(id);

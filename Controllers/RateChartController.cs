@@ -27,7 +27,7 @@ namespace maple_web_api.Controllers
         }
 
         // GET: api/RateChart/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetRateChartItem")]
         public IActionResult GetRateChartItem(int id)
         {
             var rateChartItem = _repository.GetRate(id);

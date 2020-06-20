@@ -27,7 +27,7 @@ namespace maple_web_api.Controllers
         }
 
         // GET: api/Customer/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCustomer")]
         public IActionResult GetCustomer(int id)
         {
             var customer = _repository.GetCustomer(id);
