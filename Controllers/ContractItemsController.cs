@@ -158,10 +158,5 @@ namespace maple_web_api.Controllers
 
             return NoContent();
         }
-
-        private bool ContractItemExists(int id)
-        {
-            return _repository.GetContract(id) != null ? true : false;
-        }
     }
 }
