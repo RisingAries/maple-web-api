@@ -186,5 +186,25 @@ namespace maple_web_api.Services
             _context.SaveChanges();
 
         }
+
+        public bool RateChartItemExists(int id)
+        {
+            return _context.RateCharts.Any(rc => rc.RateId == id);
+        }
+
+        public bool CustomerExists(int id)
+        {
+            return _context.Customers.Any(e => e.CustomerId == id);
+        }
+
+        public bool CoveragePlanItemExists(int id)
+        {
+            return _context.CoveragePlans.Any(cp => cp.PlanId == id);
+        }
+
+        public bool ContractItemExists(int id)
+        {
+            return _context.ContractItems.Any(ci => ci.ContractId == id);
+        }
     }
 }

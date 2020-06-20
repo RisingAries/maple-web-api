@@ -14,25 +14,25 @@ namespace maple_web_api.Controllers
     [ApiController]
     public class CoveragePlanController : ControllerBase
     {
-        private readonly IInsuranceInfoRepository _respository;
+        private readonly IInsuranceInfoRepository _repository;
 
         public CoveragePlanController(IInsuranceInfoRepository context)
         {
-            _respository = context;
+            _repository = context;
         }
 
         // GET: api/CoveragePlan
         [HttpGet]
         public IActionResult GetCoveragePlanItem()
         {
-            return Ok(_respository.GetCoveragePlans());
+            return Ok(_repository.GetCoveragePlans());
         }
 
         // GET: api/CoveragePlan/5
         [HttpGet("{id}")]
         public IActionResult GetCoveragePlanItem(int id)
         {
-            var coveragePlanItem = _respository.GetCoveragePlan(id);
+            var coveragePlanItem = _repository.GetCoveragePlan(id);
 
             if (coveragePlanItem == null)
             {
@@ -54,12 +54,12 @@ namespace maple_web_api.Controllers
             }
             try
             {
-                _respository.EditCoveragePlan(id, coveragePlanItem);
+                _repository.EditCoveragePlan(id, coveragePlanItem);
             }
 
             catch (DbUpdateConcurrencyException)
             {
-                if (!CoveragePlanItemExists(id))
+                if (!_repository.CoveragePlanItemExists(id))
                 {
                     return NotFound();
                 }
@@ -77,7 +77,7 @@ namespace maple_web_api.Controllers
         [HttpPost]
         public IActionResult PostCoveragePlanItem(CoveragePlanItem coveragePlanItem)
         {
-            _respository.SaveCoveragePlan(coveragePlanItem);
+            _repository.SaveCoveragePlan(coveragePlanItem);
 
 
             return CreatedAtAction("GetCoveragePlanItem", new { id = coveragePlanItem.PlanId }, coveragePlanItem);
@@ -87,20 +87,17 @@ namespace maple_web_api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteCoveragePlanItem(int id)
         {
-            var coveragePlanItem = _respository.GetCoveragePlan(id);
+            var coveragePlanItem = _repository.GetCoveragePlan(id);
             if (coveragePlanItem == null)
             {
                 return NotFound();
             }
 
-            _respository.DeleteCoveragePlan(coveragePlanItem);
+            _repository.DeleteCoveragePlan(coveragePlanItem);
 
             return NoContent();
         }
 
-        private bool CoveragePlanItemExists(int id)
-        {
-            return _respository.GetCoveragePlan(id) != null ? true : false;
-        }
+
     }
 }

@@ -46,5 +46,13 @@ namespace maple_web_api.Services
 
         void SaveRate(RateChartItem rateChartItem);
         void DeleteRate(RateChartItem rateChartItem);
+
+        bool RateChartItemExists(int id);
+
+        bool CustomerExists(int id);
+
+        bool CoveragePlanItemExists(int id);
+
+        bool ContractItemExists(int id);
     }
 }

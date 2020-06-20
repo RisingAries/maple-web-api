@@ -56,7 +56,7 @@ namespace maple_web_api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RateChartItemExists(id))
+                if (!_repository.RateChartItemExists(id))
                 {
                     return NotFound();
                 }
@@ -94,9 +94,6 @@ namespace maple_web_api.Controllers
             return NoContent();
         }
 
-        private bool RateChartItemExists(int id)
-        {
-            return _repository.GetRate(id) != null ? true : false;
-        }
+
     }
 }

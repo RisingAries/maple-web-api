@@ -56,7 +56,7 @@ namespace maple_web_api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CustomerExists(id))
+                if (!_repository.CustomerExists(id))
                 {
                     return NotFound();
                 }
@@ -96,9 +96,6 @@ namespace maple_web_api.Controllers
             return NoContent();
         }
 
-        private bool CustomerExists(int id)
-        {
-            return _repository.GetCustomers().Any(e => e.CustomerId == id);
-        }
+
     }
 }
