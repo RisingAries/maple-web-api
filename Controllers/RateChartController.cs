@@ -44,7 +44,7 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public IActionResult PutRateChartItem(int id, RateChartItem rateChartItem)
+        public IActionResult PutRateChartItem(int id, [FromBody] RateChartItem rateChartItem)
         {
             if (id != rateChartItem.RateId)
             {
@@ -73,7 +73,7 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public IActionResult PostRateChartItem(RateChartItem rateChartItem)
+        public IActionResult PostRateChartItem([FromBody] RateChartItem rateChartItem)
         {
             _repository.SaveRate(rateChartItem);
 

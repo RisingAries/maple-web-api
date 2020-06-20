@@ -44,7 +44,7 @@ namespace maple_web_api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public IActionResult PutCustomer(int id, Customer customer)
+        public IActionResult PutCustomer(int id, [FromBody] Customer customer)
         {
             if (id != customer.CustomerId)
             {
